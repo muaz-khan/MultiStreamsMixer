@@ -1,0 +1,1 @@
+window.MultiStreamsMixer = function(arrayOfMediaStreams) {

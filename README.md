@@ -1,0 +1,51 @@
+# MultiStreamsMixer | Mix Multiple Cameras & Screens into Single Stream
+
+* https://www.webrtc-experiment.com/MultiStreamsMixer/
+
+[![npm](https://img.shields.io/npm/v/multistreamsmixer.svg)](https://npmjs.org/package/multistreamsmixer) [![downloads](https://img.shields.io/npm/dm/multistreamsmixer.svg)](https://npmjs.org/package/multistreamsmixer) [![Build Status: Linux](https://travis-ci.org/muaz-khan/MultiStreamsMixer.png?branch=master)](https://travis-ci.org/muaz-khan/MultiStreamsMixer)
+
+> Pass multiple streams (e.g. screen+camera or multiple-cameras) and get single stream. 
+
+# How to use?
+
+```javascript
+// https://cdn.webrtc-experiment.com/MultiStreamsMixer.js
+screenStream.fullcanvas = true;
+screenStream.width = screen.width; // or 3840
+screenStream.height = screen.height; // or 2160 
+
+cameraStream.width = parseInt((20 / 100) * screenStream.width);
+cameraStream.height = parseInt((20 / 100) * screenStream.height);
+cameraStream.top = screenStream.height - cameraStream.height;
+cameraStream.left = screenStream.width - cameraStream.width;
+
+var mixer = new MultiStreamsMixer([screenStream, cameraStream]);
+
+mixer.mixedStream.getTracks().forEach(function(track) {
+    rtcPeerConnection.addTrack(track, mixer.mixedStream)
+});
+
+mixer.setOptions({
+    frameInterval: 1
+});
+
+mixer.startDrawingFrames();
+
+btnStopStreams.onclick = function() {
+    mixer.releaseStreams();
+};
+
+btnAppendNewStreams.onclick = function() {
+    mixer.appendStreams([anotherStream]);
+};
+
+btnStopScreenSharing.onclick = function() {
+    // replace all old streams with this one
+    // it will replace only video tracks
+    mixer.replaceStreams([cameraStreamOnly]);
+};
+```
+
+## License
+
+[MultiStreamsMixer.js](https://github.com/muaz-khan/MultiStreamsMixer) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com).

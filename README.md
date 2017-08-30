@@ -6,7 +6,20 @@
 
 > Pass multiple streams (e.g. screen+camera or multiple-cameras) and get single stream. 
 
-# How to use?
+# How to mix audios?
+
+```javascript
+// https://cdn.webrtc-experiment.com/MultiStreamsMixer.js
+var audioMixer = new MultiStreamsMixer([microphone1, microphone2]);
+
+// record using MediaRecorder API
+var recorder = new MediaRecorder(audioMixer.getMixedStream());
+
+// or share using WebRTC
+rtcPeerConnection.addStream(audioMixer.getMixedStream());
+```
+
+# How to mix screen+camera?
 
 ```javascript
 // https://cdn.webrtc-experiment.com/MultiStreamsMixer.js
@@ -21,14 +34,9 @@ cameraStream.left = screenStream.width - cameraStream.width;
 
 var mixer = new MultiStreamsMixer([screenStream, cameraStream]);
 
-mixer.mixedStream.getTracks().forEach(function(track) {
-    rtcPeerConnection.addTrack(track, mixer.mixedStream)
-});
+rtcPeerConnection.addStream(audioMixer.getMixedStream());
 
-mixer.setOptions({
-    frameInterval: 1
-});
-
+mixer.frameInterval = 1;
 mixer.startDrawingFrames();
 
 btnStopStreams.onclick = function() {
@@ -45,6 +53,26 @@ btnStopScreenSharing.onclick = function() {
     mixer.replaceStreams([cameraStreamOnly]);
 };
 ```
+
+# How to mix multiple cameras?
+
+```javascript
+// https://cdn.webrtc-experiment.com/MultiStreamsMixer.js
+var mixer = new MultiStreamsMixer([camera1, camera2]);
+
+rtcPeerConnection.addStream(audioMixer.getMixedStream());
+
+mixer.frameInterval = 1;
+mixer.startDrawingFrames();
+```
+
+# API
+
+1. `getMixedStream`: (function) returns mixed MediaStream object
+2. `frameInterval`: (property) allows you set frame interval
+3. `startDrawingFrames`: (function) start mixing video streams
+4. `resetVideoStreams`: (function) replace all existing video streams with new ones
+5. `releaseStreams`: (function) stop mixing streams
 
 ## License
 

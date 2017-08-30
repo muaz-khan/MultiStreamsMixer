@@ -10,13 +10,6 @@ function getVideo(stream) {
     video.muted = true;
     video.volume = 0;
 
-    if (stream.fullcanvas) {
-        video.onloadedmetadata = function() {
-            video.onloadedmetadata = null;
-            self.onMixerReady();
-        };
-    }
-
     video.play();
 
     return video;

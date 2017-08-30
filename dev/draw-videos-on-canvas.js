@@ -22,15 +22,23 @@ function drawVideosToCanvas() {
     if (fullcanvas) {
         canvas.width = fullcanvas.stream.width;
         canvas.height = fullcanvas.stream.height;
-    } else {
+    } else if (remaining.length) {
         canvas.width = videosLength > 1 ? remaining[0].width * 2 : remaining[0].width;
         canvas.height = videosLength > 2 ? remaining[0].height * 2 : remaining[0].height;
+    } else {
+        canvas.width = self.width || 320;
+        canvas.height = self.height || 240;
     }
 
-    drawImage(fullcanvas);
-    remaining.forEach(drawImage);
+    if (fullcanvas && fullcanvas instanceof HTMLVideoElement) {
+        drawImage(fullcanvas);
+    }
 
-    setTimeout(drawVideosToCanvas, options.frameInterval);
+    remaining.forEach(function(video, idx) {
+        drawImage(video, idx);
+    });
+
+    setTimeout(drawVideosToCanvas, self.frameInterval);
 }
 
 function drawImage(video, idx) {

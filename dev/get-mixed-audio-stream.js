@@ -8,9 +8,11 @@ function getMixedAudioStream() {
 
     self.audioSources = [];
 
-    self.gainNode = self.audioContext.createGain();
-    self.gainNode.connect(self.audioContext.destination);
-    self.gainNode.gain.value = 0; // don't hear self
+    if (self.useGainNode === true) {
+        self.gainNode = self.audioContext.createGain();
+        self.gainNode.connect(self.audioContext.destination);
+        self.gainNode.gain.value = 0; // don't hear self
+    }
 
     var audioTracksLength = 0;
     arrayOfMediaStreams.forEach(function(stream) {
@@ -21,7 +23,11 @@ function getMixedAudioStream() {
         audioTracksLength++;
 
         var audioSource = self.audioContext.createMediaStreamSource(stream);
-        audioSource.connect(self.gainNode);
+
+        if (self.useGainNode === true) {
+            audioSource.connect(self.gainNode);
+        }
+
         self.audioSources.push(audioSource);
     });
 

@@ -38,7 +38,6 @@ module.exports = function(grunt) {
                     'dev/head.js',
                     'dev/init.js',
                     'dev/cross-browser-declarations.js',
-                    'dev/set-options.js',
                     'dev/start-drawing-frames.js',
                     'dev/draw-videos-on-canvas.js',
                     'dev/get-mixed-stream.js',
@@ -48,8 +47,8 @@ module.exports = function(grunt) {
                     'dev/append-streams.js',
                     'dev/release-streams.js',
                     'dev/replace-streams.js',
+                    'dev/tail.js',
                     'dev/module.exports.js',
-                    'dev/tail.js'
                 ],
                 dest: 'MultiStreamsMixer.js',
             },

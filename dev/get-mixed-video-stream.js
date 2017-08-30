@@ -7,7 +7,7 @@ function getMixedVideoStream() {
         capturedStream = canvas.captureStream();
     } else if ('mozCaptureStream' in canvas) {
         capturedStream = canvas.mozCaptureStream();
-    } else if (!options.disableLogs) {
+    } else if (!self.disableLogs) {
         console.error('Upgrade to latest Chrome or otherwise enable this flag: chrome://flags/#enable-experimental-web-platform-features');
     }
 

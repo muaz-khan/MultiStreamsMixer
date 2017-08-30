@@ -16,9 +16,5 @@ function getMixedStream() {
         }
     });
 
-    if (!fullcanvas) {
-        self.onMixerReady();
-    }
-
     return mixedVideoStream;
 }

@@ -1,3 +1,5 @@
+<script>window.demoVersion = '2017.08.30';</script>
+
 <!--
 > Muaz Khan     - www.MuazKhan.com
 > MIT License   - www.WebRTC-Experiment.com/licence
@@ -36,14 +38,15 @@
     <script src="https://cdn.webrtc-experiment.com/MultiStreamsMixer.js"></script>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script src="https://cdn.webrtc-experiment.com/getScreenId.js"> </script>
+    <script src="https://cdn.webrtc-experiment.com/FileSelector.js"></script>
+    <script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
 
-    <script src="https://cdn.webrtc-experiment.com/syntax/sh_main.min.js" type="text/javascript"> </script>
-    <script src="https://cdn.webrtc-experiment.com/syntax/sh_javascript.min.js" type="text/javascript"> </script>
-    <script src="https://cdn.webrtc-experiment.com/syntax/sh_html.min.js" type="text/javascript"> </script>
-    <link href="https://cdn.webrtc-experiment.com/syntax/sh_style.css" type="text/css" rel="stylesheet">
+    <!-- video element -->
+    <link href="https://cdn.webrtc-experiment.com/getHTMLMediaElement.css" rel="stylesheet">
+    <script src="https://cdn.webrtc-experiment.com/getHTMLMediaElement.js"></script>
 </head>
 
-<body onload="sh_highlightDocument();">
+<body>
     <article>
         <header style="text-align: center;">
             <h1>
@@ -62,30 +65,86 @@
 
         <div class="github-stargazers"></div>
 
+        <section style="text-align: center; margin-top: 15px; color: red; font-family: Courier New; font-weight: bold;" id="demoVersion"></section>
+        <script>document.getElementById('demoVersion').innerHTML = 'Last Updated On: <time>' + new Date(window.demoVersion).toDateString() + '</time>';</script>
+
         <blockquote>
             Pass multiple streams (e.g. screen+camera or multiple-cameras) and get single stream.
 
             <br><br>Requires <a href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk" target="_blank">THIS CHROME EXTENSION</a> and following Chrome flag:
 
-            <pre class="sh_javascript">
-chrome://flags/#enable-experimental-web-platform-features
+            <pre style="background:#fdf6e3;color:#586e75">chrome:<span style="color:#93a1a1">//flags/#enable-experimental-web-platform-features</span>
 </pre>
         </blockquote>
 
         <section class="experiment" style="text-align: center;">
-            <button>Get Mixed Camera+Screen Stream</button>
-            <video muted autoplay></video>
+            <button id="btn-get-mixed-stream">Get Mixed Stream</button>
+
+            <select id="mixer-options">
+                <option value="camera-screen">Camera + Screen</option>
+                <option value="multiple-cameras">Multiple Cameras</option>
+                <option value="microphone-mp3">Microphone + Mp3</option>
+            </select>
+
+            <br>
+
+            <div id="video-preview" style="margin-top: 15px;"></div>
         </section>
 
         <script>
-            var video = document.querySelector('video');
-            document.querySelector('button').onclick = function() {
+            var video = document.createElement('video');
+            video.controls = false;
+            var mediaElement = getHTMLMediaElement(video, {
+                title: 'Click "Get Mixed Stream" button',
+                buttons: [],
+                showOnMouseEnter: false,
+                width: document.getElementById('video-preview').parentNode.clientWidth
+            });
+            document.getElementById('video-preview').appendChild(mediaElement);
+
+            var div = document.createElement('section');
+            mediaElement.media.parentNode.appendChild(div);
+            div.appendChild(mediaElement.media);
+
+            var videoPreview = mediaElement.media;
+
+            var mixerOptions = document.querySelector('#mixer-options');
+
+            mixerOptions.onchange = function() {
+                localStorage.setItem('mixer-selected-options', this.value);
+                location.reload();
+            };
+            if(localStorage.getItem('mixer-selected-options')) {
+                mixerOptions.value = localStorage.getItem('mixer-selected-options');
+            }
+
+            function updateMediaHTML(html) {
+                videoPreview.parentNode.parentNode.querySelector('h2').innerHTML = html;
+            }
+
+            document.querySelector('#btn-get-mixed-stream').onclick = function() {
                 this.disabled = true;
 
+                if(mixerOptions.value === 'camera-screen') {
+                    updateMediaHTML('Capturing screen');
+                    getMixedCameraAndScreen();
+                }
+
+                if(mixerOptions.value === 'multiple-cameras') {
+                    updateMediaHTML('Capturing camera');
+                    getMixedMultipleCameras();
+                }
+
+                if(mixerOptions.value === 'microphone-mp3') {
+                    updateMediaHTML('Capturing mp3+microphone');
+                    getMixedMicrophoneAndMp3();
+                }
+            };
+
+            function getMixedCameraAndScreen() {
                 getScreenId(function (error, sourceId, screen_constraints) {
                     navigator.mediaDevices.getUserMedia(screen_constraints).then(function(screenStream) {
-                        var cameraHints = { audio: true, video: true, aspectRatio: 1.77 };
-                        navigator.mediaDevices.getUserMedia(cameraHints).then(function(cameraStream) {
+                        navigator.mediaDevices.getUserMedia({video: true}).then(function(cameraStream) {
                             screenStream.fullcanvas = true;
                             screenStream.width = screen.width; // or 3840
                             screenStream.height = screen.height; // or 2160 
@@ -97,18 +156,17 @@ chrome://flags/#enable-experimental-web-platform-features
 
                             var mixer = new MultiStreamsMixer([screenStream, cameraStream]);
 
-                            mixer.setOptions({
-                                frameInterval: 1
-                            });
-
+                            mixer.frameInterval = 1;
                             mixer.startDrawingFrames();
 
-                            video.srcObject = mixer.mixedStream;
+                            videoPreview.srcObject = mixer.getMixedStream();
+
+                            updateMediaHTML('Mixed Screen+Camera!');
 
                             addStreamStopListener(screenStream, function() {
                                 mixer.releaseStreams();
-                                video.pause();
-                                video.src = null;
+                                videoPreview.pause();
+                                videoPreview.src = null;
 
                                 cameraStream.getTracks().forEach(function(track) {
                                     track.stop();
@@ -117,7 +175,113 @@ chrome://flags/#enable-experimental-web-platform-features
                         });
                     });
                 });
-            };
+            }
+
+            function getMixedMultipleCameras() {
+                navigator.mediaDevices.getUserMedia({video: true }).then(function(cameraStream) {
+                    var clonedCamera = new MediaStream();
+                    cameraStream.getTracks().forEach(function(track) {
+                        clonedCamera.addTrack(track);
+                    });
+
+                    clonedCamera.fullcanvas = true;
+                    clonedCamera.width = screen.width; // or 3840
+                    clonedCamera.height = screen.height; // or 2160 
+
+                    cameraStream.width = parseInt((20 / 100) * clonedCamera.width);
+                    cameraStream.height = parseInt((20 / 100) * clonedCamera.height);
+                    cameraStream.top = clonedCamera.height - cameraStream.height;
+                    cameraStream.left = clonedCamera.width - cameraStream.width;
+
+                    var mixer = new MultiStreamsMixer([clonedCamera, cameraStream]);
+
+                    mixer.frameInterval = 1;
+                    mixer.startDrawingFrames();
+
+                    videoPreview.srcObject = mixer.getMixedStream();
+
+                    updateMediaHTML('Mixed Multiple Cameras!');
+                });
+            }
+
+            function getMixedMicrophoneAndMp3() {
+                updateMediaHTML('Select Mp3 file.');
+
+                getMp3Stream(function(mp3Stream) {
+                    navigator.mediaDevices.getUserMedia({
+                        audio: true
+                    }).then(function(microphoneStream) {
+                        var audioMixer = new MultiStreamsMixer([microphoneStream, mp3Stream]);
+                        // audioMixer.useGainNode = false;
+                        var audioPreview = document.createElement('audio');
+                        audioPreview.controls = true;
+                        audioPreview.autoplay = true;
+                        audioPreview.srcObject = audioMixer.getMixedStream();
+                        videoPreview.replaceWith(audioPreview);
+                        videoPreview = audioPreview;
+
+                        var secondsLeft = 6;
+                        (function looper() {
+                            secondsLeft--;
+
+                            if(secondsLeft < 0) {
+                                updateMediaHTML('Mixed Microphone+Mp3!');
+                                return;
+                            }
+                            updateMediaHTML('Seconds left: ' + secondsLeft);
+                            setTimeout(looper, 1000);
+                        })();
+
+                        var recorder = RecordRTC(audioMixer.getMixedStream(), {
+                            recorderType: StereoAudioRecorder
+                        });
+
+                        recorder.startRecording();
+
+                        setTimeout(function() {
+                            recorder.stopRecording(function() {
+                                audioPreview.removeAttribute('srcObject');
+                                audioPreview.src = URL.createObjectURL(recorder.getBlob());
+                            });
+                        }, 5000)
+                    });
+                });
+            }
+
+            function getMp3Stream(callback) {
+                var selector = new FileSelector();
+                selector.accept = '*.mp3';
+                selector.selectSingleFile(function(mp3File) {
+                    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                    var context = new AudioContext();
+                    var gainNode = context.createGain();
+                    gainNode.connect(context.destination);
+                    gainNode.gain.value = 0; // don't play for self
+
+                    var reader = new FileReader();
+                    reader.onload = (function(e) {
+                        // Import callback function
+                        // provides PCM audio data decoded as an audio buffer
+                        context.decodeAudioData(e.target.result, createSoundSource);
+                    });
+                    reader.readAsArrayBuffer(mp3File);
+
+                    function createSoundSource(buffer) {
+                        var soundSource = context.createBufferSource();
+                        soundSource.buffer = buffer;
+                        soundSource.start(0, 0 / 1000);
+                        soundSource.connect(gainNode);
+                        var destination = context.createMediaStreamDestination();
+                        soundSource.connect(destination);
+
+                        // durtion=second*1000 (milliseconds)
+                        callback(destination.stream, buffer.duration * 1000);
+                    }
+                }, function() {
+                    document.querySelector('#btn-get-mixed-stream').disabled = false;
+                    alert('Please select mp3 file.');
+                });
+            }
 
             function addStreamStopListener(stream, callback) {
                 var streamEndedEvent = 'ended';
@@ -145,58 +309,33 @@ chrome://flags/#enable-experimental-web-platform-features
 
         <section class="experiment">
             <h2>How to use MultiStreamsMixer?</h2>
-            <pre class="sh_javascript">
-// https://cdn.webrtc-experiment.com/MultiStreamsMixer.js
-screenStream.fullcanvas = true;
-screenStream.width = screen.width; // or 3840
-screenStream.height = screen.height; // or 2160 
+            <pre style="background:#fdf6e3;color:#586e75"><span style="color:#93a1a1">// https://cdn.webrtc-experiment.com/MultiStreamsMixer.js</span>
 
-cameraStream.width = parseInt((20 / 100) * screenStream.width);
-cameraStream.height = parseInt((20 / 100) * screenStream.height);
-cameraStream.top = screenStream.height - cameraStream.height;
-cameraStream.left = screenStream.width - cameraStream.width;
+<span style="color:#268bd2">var</span> audioMixer <span style="color:#859900">=</span> <span style="color:#859900">new</span> MultiStreamsMixer<span style="color:#93a1a1">(</span><span style="color:#268bd2">[</span>microphone1, microphone2<span style="color:#268bd2">]</span><span style="color:#93a1a1">)</span>;
 
-var mixer = new MultiStreamsMixer([screenStream, cameraStream]);
+<span style="color:#93a1a1">// record using MediaRecorder API</span>
+<span style="color:#268bd2">var</span> recorder <span style="color:#859900">=</span> <span style="color:#859900">new</span> MediaRecorder<span style="color:#93a1a1">(</span>audioMixer.getMixedStream<span style="color:#93a1a1">(</span><span style="color:#93a1a1">)</span><span style="color:#93a1a1">)</span>;
 
-mixer.mixedStream.getTracks().forEach(function(track) {
-    rtcPeerConnection.addTrack(track, mixer.mixedStream)
-});
-
-mixer.setOptions({
-    frameInterval: 1
-});
-
-mixer.startDrawingFrames();
-
-btnStopStreams.onclick = function() {
-    mixer.releaseStreams();
-};
-
-btnAppendNewStreams.onclick = function() {
-    mixer.appendStreams([anotherStream]);
-};
-
-btnStopScreenSharing.onclick = function() {
-    // replace all old streams with this one
-    // it will replace only video tracks
-    mixer.replaceStreams([cameraStreamOnly]);
-};
+<span style="color:#93a1a1">// or share using WebRTC</span>
+rtcPeerConnection.addStream<span style="color:#93a1a1">(</span>audioMixer.getMixedStream<span style="color:#93a1a1">(</span><span style="color:#93a1a1">)</span><span style="color:#93a1a1">)</span>;
 </pre>
         </section>
 
-        <section class="experiment own-widgets">
+        <!--
+        <section class="experiment">
             <h2 class="header" id="updates" style="color: red; padding-bottom: .1em;"><a href="https://github.com/muaz-khan/MultiStreamsMixer/issues" target="_blank">Issues</a>
             </h2>
             <div id="github-issues"></div>
         </section>
+        -->
 
-        <section class="experiment"><small id="send-message"></small></section>
-
-        <section class="experiment own-widgets latest-commits">
+        <section class="experiment">
             <h2 class="header" id="updates" style="color: red; padding-bottom: .1em;"><a href="https://github.com/muaz-khan/MultiStreamsMixer/commits/master" target="_blank">Latest Updates</a>
             </h2>
             <div id="github-commits"></div>
         </section>
+
+        <section class="experiment"><small id="send-message"></small></section>
     </article>
 
     <a href="https://github.com/muaz-khan/MultiStreamsMixer" class="fork-left"></a>

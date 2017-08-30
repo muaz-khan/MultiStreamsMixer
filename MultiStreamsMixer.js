@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2017-08-04 3:31:01 AM UTC
+// Last time updated: 2017-08-30 2:14:46 PM UTC
 
 // ________________________
 // MultiStreamsMixer v1.0.0
@@ -21,10 +21,18 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
 
     var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
-    canvas.style = 'opacity:0;position:absolute;z-index:-1;top: -100000000;left:-1000000000;';
+    canvas.style = 'opacity:0;position:absolute;z-index:-1;top: -100000000;left:-1000000000; margin-top:-1000000000;margin-left:-1000000000;';
     (document.body || document.documentElement).appendChild(canvas);
 
-    var options = {};
+    this.disableLogs = false;
+    this.audioOnly = false;
+    this.frameInterval = 10;
+
+    this.width = 320;
+    this.height = 240;
+
+    // use gain node to prevent echo
+    this.useGainNode = true;
 
     var self = this;
 
@@ -131,31 +139,6 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
         Storage.AudioContext = webkitAudioContext;
     }
 
-    this.setOptions = function() {
-        options = options || {
-            video: {
-                width: 360,
-                height: 240
-            }
-        };
-
-        if (!options.frameInterval) {
-            options.frameInterval = 10;
-        }
-
-        if (!options.video) {
-            options.video = {};
-        }
-
-        if (!options.video.width) {
-            options.video.width = 360;
-        }
-
-        if (!options.video.height) {
-            options.video.height = 240;
-        }
-    };
-
     this.startDrawingFrames = function() {
         drawVideosToCanvas();
     };
@@ -184,15 +167,23 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
         if (fullcanvas) {
             canvas.width = fullcanvas.stream.width;
             canvas.height = fullcanvas.stream.height;
-        } else {
+        } else if (remaining.length) {
             canvas.width = videosLength > 1 ? remaining[0].width * 2 : remaining[0].width;
             canvas.height = videosLength > 2 ? remaining[0].height * 2 : remaining[0].height;
+        } else {
+            canvas.width = self.width || 320;
+            canvas.height = self.height || 240;
         }
 
-        drawImage(fullcanvas);
-        remaining.forEach(drawImage);
+        if (fullcanvas && fullcanvas instanceof HTMLVideoElement) {
+            drawImage(fullcanvas);
+        }
 
-        setTimeout(drawVideosToCanvas, options.frameInterval);
+        remaining.forEach(function(video, idx) {
+            drawImage(video, idx);
+        });
+
+        setTimeout(drawVideosToCanvas, self.frameInterval);
     }
 
     function drawImage(video, idx) {
@@ -259,10 +250,6 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
             }
         });
 
-        if (!fullcanvas) {
-            self.onMixerReady();
-        }
-
         return mixedVideoStream;
     }
 
@@ -275,7 +262,7 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
             capturedStream = canvas.captureStream();
         } else if ('mozCaptureStream' in canvas) {
             capturedStream = canvas.mozCaptureStream();
-        } else if (!options.disableLogs) {
+        } else if (!self.disableLogs) {
             console.error('Upgrade to latest Chrome or otherwise enable this flag: chrome://flags/#enable-experimental-web-platform-features');
         }
 
@@ -300,9 +287,11 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
 
         self.audioSources = [];
 
-        self.gainNode = self.audioContext.createGain();
-        self.gainNode.connect(self.audioContext.destination);
-        self.gainNode.gain.value = 0; // don't hear self
+        if (self.useGainNode === true) {
+            self.gainNode = self.audioContext.createGain();
+            self.gainNode.connect(self.audioContext.destination);
+            self.gainNode.gain.value = 0; // don't hear self
+        }
 
         var audioTracksLength = 0;
         arrayOfMediaStreams.forEach(function(stream) {
@@ -313,7 +302,11 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
             audioTracksLength++;
 
             var audioSource = self.audioContext.createMediaStreamSource(stream);
-            audioSource.connect(self.gainNode);
+
+            if (self.useGainNode === true) {
+                audioSource.connect(self.gainNode);
+            }
+
             self.audioSources.push(audioSource);
         });
 
@@ -339,13 +332,6 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
 
         video.muted = true;
         video.volume = 0;
-
-        if (stream.fullcanvas) {
-            video.onloadedmetadata = function() {
-                video.onloadedmetadata = null;
-                self.onMixerReady();
-            };
-        }
 
         video.play();
 
@@ -433,21 +419,16 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
         });
     }
 
-    if (typeof module !== 'undefined' /* && !!module.exports*/ ) {
-        module.exports = MultiStreamsMixer;
-    }
-
-    if (typeof window !== 'undefined') {
-        window.MultiStreamsMixer = MultiStreamsMixer;
-    }
-
     // for debugging
     this.name = 'MultiStreamsMixer';
     this.toString = function() {
         return this.name;
     };
 
-    this.onMixerReady = function() {};
-    this.mixedStream = getMixedStream();
+    this.getMixedStream = getMixedStream;
 
 };
+
+if (typeof module !== 'undefined' /* && !!module.exports*/ ) {
+    module.exports = MultiStreamsMixer;
+}

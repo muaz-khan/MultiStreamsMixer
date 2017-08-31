@@ -1,9 +1,7 @@
-'use strict';
-
-// Last time updated: 2017-08-30 2:14:46 PM UTC
+// Last time updated: 2017-08-31 2:56:12 AM UTC
 
 // ________________________
-// MultiStreamsMixer v1.0.0
+// MultiStreamsMixer v1.0.2
 
 // Open-Sourced: https://github.com/muaz-khan/MultiStreamsMixer
 
@@ -12,7 +10,7 @@
 // MIT License   - www.WebRTC-Experiment.com/licence
 // --------------------------------------------------
 
-window.MultiStreamsMixer = function(arrayOfMediaStreams) {
+function MultiStreamsMixer(arrayOfMediaStreams) {
 
     // requires: chrome://flags/#enable-experimental-web-platform-features
 
@@ -25,10 +23,9 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
     (document.body || document.documentElement).appendChild(canvas);
 
     this.disableLogs = false;
-    this.audioOnly = false;
     this.frameInterval = 10;
 
-    this.width = 320;
+    this.width = 360;
     this.height = 240;
 
     // use gain node to prevent echo
@@ -111,24 +108,13 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
         }
 
         // override "stop" method for all browsers
-        MediaStream.prototype.__stop = MediaStream.prototype.stop;
-        MediaStream.prototype.stop = function() {
-            this.getAudioTracks().forEach(function(track) {
-                if (!!track.stop) {
+        if (typeof MediaStream.prototype.stop === 'undefined') {
+            MediaStream.prototype.stop = function() {
+                this.getTracks().forEach(function(track) {
                     track.stop();
-                }
-            });
-
-            this.getVideoTracks().forEach(function(track) {
-                if (!!track.stop) {
-                    track.stop();
-                }
-            });
-
-            if (typeof this.__stop === 'function') {
-                this.__stop();
-            }
-        };
+                });
+            };
+        }
     }
 
     var Storage = {};
@@ -171,7 +157,7 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
             canvas.width = videosLength > 1 ? remaining[0].width * 2 : remaining[0].width;
             canvas.height = videosLength > 2 ? remaining[0].height * 2 : remaining[0].height;
         } else {
-            canvas.width = self.width || 320;
+            canvas.width = self.width || 360;
             canvas.height = self.height || 240;
         }
 
@@ -333,6 +319,9 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
         video.muted = true;
         video.volume = 0;
 
+        video.width = stream.width || self.width || 360;
+        video.height = stream.height || self.height || 240;
+
         video.play();
 
         return video;
@@ -427,8 +416,4 @@ window.MultiStreamsMixer = function(arrayOfMediaStreams) {
 
     this.getMixedStream = getMixedStream;
 
-};
-
-if (typeof module !== 'undefined' /* && !!module.exports*/ ) {
-    module.exports = MultiStreamsMixer;
 }

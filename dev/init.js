@@ -9,10 +9,9 @@ canvas.style = 'opacity:0;position:absolute;z-index:-1;top: -100000000;left:-100
 (document.body || document.documentElement).appendChild(canvas);
 
 this.disableLogs = false;
-this.audioOnly = false;
 this.frameInterval = 10;
 
-this.width = 320;
+this.width = 360;
 this.height = 240;
 
 // use gain node to prevent echo

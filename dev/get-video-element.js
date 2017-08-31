@@ -10,6 +10,9 @@ function getVideo(stream) {
     video.muted = true;
     video.volume = 0;
 
+    video.width = stream.width || self.width || 360;
+    video.height = stream.height || self.height || 240;
+
     video.play();
 
     return video;

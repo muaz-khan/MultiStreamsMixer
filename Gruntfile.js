@@ -9,9 +9,7 @@ module.exports = function(grunt) {
 
     var versionNumber = grunt.file.readJSON('package.json').version;
 
-    var banner = '\'use strict\';\n\n';
-
-    banner += '// Last time updated: <%= grunt.template.today("UTC:yyyy-mm-dd h:MM:ss TT Z") %>\n\n';
+    var banner = '// Last time updated: <%= grunt.template.today("UTC:yyyy-mm-dd h:MM:ss TT Z") %>\n\n';
 
     banner += '// ________________________\n';
     banner += '// MultiStreamsMixer v' + versionNumber + '\n\n';
@@ -47,8 +45,7 @@ module.exports = function(grunt) {
                     'dev/append-streams.js',
                     'dev/release-streams.js',
                     'dev/replace-streams.js',
-                    'dev/tail.js',
-                    'dev/module.exports.js',
+                    'dev/tail.js'
                 ],
                 dest: 'MultiStreamsMixer.js',
             },

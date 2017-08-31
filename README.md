@@ -1,15 +1,51 @@
-# MultiStreamsMixer | Mix Multiple Cameras & Screens into Single Stream
+# [MultiStreamsMixer.js](https://github.com/muaz-khan/MultiStreamsMixer) | [LIVE DEMO](https://www.webrtc-experiment.com/MultiStreamsMixer/)
 
-* https://www.webrtc-experiment.com/MultiStreamsMixer/
+# Mix Multiple Cameras or Videos
+
+# Mix Multiple Microphones or Audios (Mp3/Wav/Ogg)
+
+# Mix Multiple Screens or Screen+Video
+
+# Mix Canvas 2D Animation + Camera + Screen
+
+# and GET SINGLE STREAM!!
 
 [![npm](https://img.shields.io/npm/v/multistreamsmixer.svg)](https://npmjs.org/package/multistreamsmixer) [![downloads](https://img.shields.io/npm/dm/multistreamsmixer.svg)](https://npmjs.org/package/multistreamsmixer) [![Build Status: Linux](https://travis-ci.org/muaz-khan/MultiStreamsMixer.png?branch=master)](https://travis-ci.org/muaz-khan/MultiStreamsMixer)
 
+# All Demos
+
+1. **Main Demo:** https://www.webrtc-experiment.com/MultiStreamsMixer/
+2. [Record Multiple Cameras](https://www.webrtc-experiment.com/RecordRTC/simple-demos/multi-cameras-recording.html)
+3. [Record Camera+Screen](https://www.webrtc-experiment.com/RecordRTC/simple-demos/video-plus-screen-recording.html)
+
 > Pass multiple streams (e.g. screen+camera or multiple-cameras) and get single stream. 
+
+# Link the library
+
+```html
+<script src="https://cdn.webrtc-experiment.com/MultiStreamsMixer.js"></script>
+
+<!-- or min.js -->
+<script src="https://cdn.webrtc-experiment.com/MultiStreamsMixer.min.js"></script>
+
+<!-- or without CDN -->
+<script src="https://www.webrtc-experiment.com/MultiStreamsMixer.js"></script>
+
+<!-- or rawgit -->
+<script src="https://rawgit.com/muaz-khan/MultiStreamsMixer/master/MultiStreamsMixer.js"></script>
+```
+
+Or link specific build:
+
+* https://github.com/muaz-khan/MultiStreamsMixer/releases
+
+```html
+<script src="https://github.com/muaz-khan/MultiStreamsMixer/releases/download/1.0.2/MultiStreamsMixer.js"></script>
+```
 
 # How to mix audios?
 
 ```javascript
-// https://cdn.webrtc-experiment.com/MultiStreamsMixer.js
 var audioMixer = new MultiStreamsMixer([microphone1, microphone2]);
 
 // record using MediaRecorder API
@@ -22,7 +58,6 @@ rtcPeerConnection.addStream(audioMixer.getMixedStream());
 # How to mix screen+camera?
 
 ```javascript
-// https://cdn.webrtc-experiment.com/MultiStreamsMixer.js
 screenStream.fullcanvas = true;
 screenStream.width = screen.width; // or 3840
 screenStream.height = screen.height; // or 2160 
@@ -57,7 +92,6 @@ btnStopScreenSharing.onclick = function() {
 # How to mix multiple cameras?
 
 ```javascript
-// https://cdn.webrtc-experiment.com/MultiStreamsMixer.js
 var mixer = new MultiStreamsMixer([camera1, camera2]);
 
 rtcPeerConnection.addStream(audioMixer.getMixedStream());
@@ -73,6 +107,7 @@ mixer.startDrawingFrames();
 3. `startDrawingFrames`: (function) start mixing video streams
 4. `resetVideoStreams`: (function) replace all existing video streams with new ones
 5. `releaseStreams`: (function) stop mixing streams
+6. `appendStreams`: (function) append extra/new streams (anytime)
 
 ## License
 

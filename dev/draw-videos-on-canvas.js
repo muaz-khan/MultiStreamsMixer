@@ -26,7 +26,7 @@ function drawVideosToCanvas() {
         canvas.width = videosLength > 1 ? remaining[0].width * 2 : remaining[0].width;
         canvas.height = videosLength > 2 ? remaining[0].height * 2 : remaining[0].height;
     } else {
-        canvas.width = self.width || 320;
+        canvas.width = self.width || 360;
         canvas.height = self.height || 240;
     }
 

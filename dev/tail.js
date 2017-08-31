@@ -6,4 +6,4 @@ this.toString = function() {
 
 this.getMixedStream = getMixedStream;
 
-};
+}

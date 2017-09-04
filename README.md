@@ -1,14 +1,10 @@
 # [MultiStreamsMixer.js](https://github.com/muaz-khan/MultiStreamsMixer) | [LIVE DEMO](https://www.webrtc-experiment.com/MultiStreamsMixer/)
 
-# Mix Multiple Cameras or Videos
-
-# Mix Multiple Microphones or Audios (Mp3/Wav/Ogg)
-
-# Mix Multiple Screens or Screen+Video
-
-# Mix Canvas 2D Animation + Camera + Screen
-
-# and GET SINGLE STREAM!!
+* Mix Multiple Cameras or Videos
+* Mix Multiple Microphones or Audios (Mp3/Wav/Ogg)
+* Mix Multiple Screens or Screen+Video
+* Mix Canvas 2D Animation + Camera + Screen
+* and **GET SINGLE STREAM!!**
 
 [![npm](https://img.shields.io/npm/v/multistreamsmixer.svg)](https://npmjs.org/package/multistreamsmixer) [![downloads](https://img.shields.io/npm/dm/multistreamsmixer.svg)](https://npmjs.org/package/multistreamsmixer) [![Build Status: Linux](https://travis-ci.org/muaz-khan/MultiStreamsMixer.png?branch=master)](https://travis-ci.org/muaz-khan/MultiStreamsMixer)
 
@@ -40,7 +36,7 @@ Or link specific build:
 * https://github.com/muaz-khan/MultiStreamsMixer/releases
 
 ```html
-<script src="https://github.com/muaz-khan/MultiStreamsMixer/releases/download/1.0.2/MultiStreamsMixer.js"></script>
+<script src="https://github.com/muaz-khan/MultiStreamsMixer/releases/download/1.0.3/MultiStreamsMixer.js"></script>
 ```
 
 # How to mix audios?

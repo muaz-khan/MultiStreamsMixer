@@ -24,7 +24,21 @@ function drawVideosToCanvas() {
         canvas.height = fullcanvas.stream.height;
     } else if (remaining.length) {
         canvas.width = videosLength > 1 ? remaining[0].width * 2 : remaining[0].width;
-        canvas.height = videosLength > 2 ? remaining[0].height * 2 : remaining[0].height;
+
+        var height = 1;
+        if (videosLength == 3 || videosLength == 4) {
+            height = 2;
+        }
+        if (videosLength == 5 || videosLength == 6) {
+            height = 3;
+        }
+        if (videosLength == 7 || videosLength == 8) {
+            height = 4;
+        }
+        if (videosLength == 9 || videosLength == 10) {
+            height = 5;
+        }
+        canvas.height = remaining[0].height * height;
     } else {
         canvas.width = self.width || 360;
         canvas.height = self.height || 240;
@@ -62,6 +76,24 @@ function drawImage(video, idx) {
     if (idx === 3) {
         x = video.width;
         y = video.height;
+    }
+
+    if (idx === 4) {
+        y = video.height * 2;
+    }
+
+    if (idx === 5) {
+        x = video.width;
+        y = video.height * 2;
+    }
+
+    if (idx === 6) {
+        y = video.height * 3;
+    }
+
+    if (idx === 7) {
+        x = video.width;
+        y = video.height * 3;
     }
 
     if (typeof video.stream.left !== 'undefined') {

@@ -1,4 +1,4 @@
-<script>window.demoVersion = '2017.08.31';</script>
+<script>window.demoVersion = '2017.09.04';</script>
 
 <!--
 > Muaz Khan     - www.MuazKhan.com
@@ -65,8 +65,22 @@
 
         <div class="github-stargazers"></div>
 
-        <section style="text-align: center; margin-top: 15px; color: red; font-family: Courier New; font-weight: bold;" id="demoVersion"></section>
-        <script>document.getElementById('demoVersion').innerHTML = 'Last Updated On: <time>' + new Date(window.demoVersion).toDateString() + '</time>';</script>
+        <section style="text-align: center; margin-top: 15px; color: red;" id="demoVersion"></section>
+        <script>var date=new Date(window.demoVersion),month=date.toLocaleString("en-us",{month:"long"}),day=date.getUTCDate();day.toString().length<=9&&(day="0"+day);var year=date.getUTCFullYear();document.getElementById("demoVersion").innerHTML="Last Updated On: <time>"+month+" "+day+" "+year+"</time>";</script>
+
+        <div style="text-align:center;">
+                <a href="https://www.npmjs.com/package/multistreamsmixer" target="_blank">
+                    <img src="https://img.shields.io/npm/v/multistreamsmixer.svg">
+                </a>
+
+                <a href="https://www.npmjs.com/package/multistreamsmixer" target="_blank">
+                    <img src="https://img.shields.io/npm/dm/multistreamsmixer.svg">
+                </a>
+
+                <a href="https://travis-ci.org/muaz-khan/MultiStreamsMixer">
+                    <img src="https://travis-ci.org/muaz-khan/MultiStreamsMixer.png?branch=master">
+                </a>
+            </div>
 
         <blockquote>
             Pass multiple streams (e.g. screen+camera or multiple-cameras) and get single stream.
@@ -82,7 +96,8 @@
 
             <select id="mixer-options">
                 <option value="camera-screen">Camera + Screen</option>
-                <option value="multiple-cameras">Multiple Cameras</option>
+                <option value="multiple-cameras-default">Multiple Cameras (Default)</option>
+                <option value="multiple-cameras-customized">Multiple Cameras (Customized)</option>
                 <option value="microphone-mp3">Microphone + Mp3</option>
             </select>
 
@@ -130,9 +145,9 @@
                     getMixedCameraAndScreen();
                 }
 
-                if(mixerOptions.value === 'multiple-cameras') {
+                if(mixerOptions.value === 'multiple-cameras-default' || mixerOptions.value === 'multiple-cameras-customized') {
                     updateMediaHTML('Capturing camera');
-                    getMixedMultipleCameras();
+                    getMixedMultipleCameras(mixerOptions.value === 'multiple-cameras-customized');
                 }
 
                 if(mixerOptions.value === 'microphone-mp3') {
@@ -149,10 +164,13 @@
                             screenStream.width = screen.width; // or 3840
                             screenStream.height = screen.height; // or 2160 
 
-                            cameraStream.width = parseInt((20 / 100) * screenStream.width);
-                            cameraStream.height = parseInt((20 / 100) * screenStream.height);
+                            cameraStream.width = parseInt((30 / 100) * screenStream.width);
+                            cameraStream.height = parseInt((30 / 100) * screenStream.height);
                             cameraStream.top = screenStream.height - cameraStream.height;
                             cameraStream.left = screenStream.width - cameraStream.width;
+
+                            fullCanvasRenderHandler(screenStream, 'Your Screen!');
+                            normalVideoRenderHandler(cameraStream, 'Your Camera!');
 
                             var mixer = new MultiStreamsMixer([screenStream, cameraStream]);
 
@@ -177,23 +195,72 @@
                 });
             }
 
-            function getMixedMultipleCameras() {
+            function getMixedMultipleCameras(isCustomized) {
                 navigator.mediaDevices.getUserMedia({video: true }).then(function(cameraStream) {
-                    var clonedCamera = new MediaStream();
-                    cameraStream.getTracks().forEach(function(track) {
-                        clonedCamera.addTrack(track);
-                    });
+                    var mixer;
 
-                    clonedCamera.fullcanvas = true;
-                    clonedCamera.width = screen.width; // or 3840
-                    clonedCamera.height = screen.height; // or 2160 
+                    if(isCustomized === true) {
+                        var fullCanvasStream = new MediaStream();
+                        cameraStream.getTracks().forEach(function(track) {
+                            fullCanvasStream.addTrack(track);
+                        });
 
-                    cameraStream.width = parseInt((20 / 100) * clonedCamera.width);
-                    cameraStream.height = parseInt((20 / 100) * clonedCamera.height);
-                    cameraStream.top = clonedCamera.height - cameraStream.height;
-                    cameraStream.left = clonedCamera.width - cameraStream.width;
+                        fullCanvasStream.fullcanvas = true;
+                        fullCanvasStream.width = screen.width; // or 3840
+                        fullCanvasStream.height = screen.height; // or 2160 
 
-                    var mixer = new MultiStreamsMixer([clonedCamera, cameraStream]);
+                        fullCanvasRenderHandler(fullCanvasStream, 'Full Canvas Stream');
+
+                        cameraStream.width = parseInt((30 / 100) * fullCanvasStream.width);
+                        cameraStream.height = parseInt((30 / 100) * fullCanvasStream.height);
+                        cameraStream.top = fullCanvasStream.height - cameraStream.height;
+                        cameraStream.left = fullCanvasStream.width - cameraStream.width;
+
+                        var clonedCamera2 = new MediaStream();
+                        cameraStream.getTracks().forEach(function(track) {
+                            clonedCamera2.addTrack(track);
+                        });
+
+                        clonedCamera2.width = parseInt((30 / 100) * fullCanvasStream.width);
+                        clonedCamera2.height = parseInt((30 / 100) * fullCanvasStream.height);
+                        clonedCamera2.top = fullCanvasStream.height - clonedCamera2.height;
+                        clonedCamera2.left = fullCanvasStream.width - (clonedCamera2.width * 2);
+
+                        normalVideoRenderHandler(clonedCamera2, 'Someone');
+                        normalVideoRenderHandler(cameraStream, 'You!');
+                        
+                        mixer = new MultiStreamsMixer([fullCanvasStream, clonedCamera2, cameraStream]);
+                    }
+                    else {
+                        normalVideoRenderHandler(cameraStream, 'Camera', function(context, x, y, width, height, idx, textToDisplay) {
+                            context.font = '30px Georgia';
+                            textToDisplay += ' #' + (idx + 1);
+                            var measuredTextWidth = parseInt(context.measureText(textToDisplay).width);
+                            x = x + (parseInt((width - measuredTextWidth)) / 2);
+
+                            y = height - 40;
+
+                            if(idx == 2 || idx == 3) {
+                                y = (height * 2) - 40;
+                            }
+
+                            if(idx == 4 || idx == 5) {
+                                y = (height * 3) - 40;
+                            }
+                            
+                            context.strokeStyle = 'rgb(255, 0, 0)';
+                            context.fillStyle = 'rgba(255, 255, 0, .5)';
+                            roundRect(context, x - 20, y - 25, measuredTextWidth + 40, 35, 20, true);
+                            var gradient = context.createLinearGradient(0, 0, width * 2, 0);
+                            gradient.addColorStop('0', 'magenta');
+                            gradient.addColorStop('0.5', 'blue');
+                            gradient.addColorStop('1.0', 'red');
+                            context.fillStyle = gradient;
+                            context.fillText(textToDisplay, x, y);
+                        });
+
+                        mixer = new MultiStreamsMixer([cameraStream, cameraStream, cameraStream]);
+                    }
 
                     mixer.frameInterval = 1;
                     mixer.startDrawingFrames();
@@ -304,6 +371,114 @@
                         callback = function() {};
                     }, false);
                 });
+            }
+
+            function fullCanvasRenderHandler(stream, textToDisplay) {
+                // on-video-render:
+                // called as soon as this video stream is drawn (painted or recorded) on canvas2d surface
+                stream.onRender = function(context, x, y, width, height, idx) {
+                    context.font = '50px Georgia';
+                    var measuredTextWidth = parseInt(context.measureText(textToDisplay).width);
+                    x = x + (parseInt((width - measuredTextWidth)) - 40);
+                    y = y + 80;
+                    context.strokeStyle = 'rgb(255, 0, 0)';
+                    context.fillStyle = 'rgba(255, 255, 0, .5)';
+                    roundRect(context, x - 20, y - 55, measuredTextWidth + 40, 75, 20, true);
+                    var gradient = context.createLinearGradient(0, 0, width * 2, 0);
+                    gradient.addColorStop('0', 'magenta');
+                    gradient.addColorStop('0.5', 'blue');
+                    gradient.addColorStop('1.0', 'red');
+                    context.fillStyle = gradient;
+                    context.fillText(textToDisplay, x, y);
+                };
+            }
+
+            function normalVideoRenderHandler(stream, textToDisplay, callback) {
+                // on-video-render:
+                // called as soon as this video stream is drawn (painted or recorded) on canvas2d surface
+                stream.onRender = function(context, x, y, width, height, idx, ignoreCB) {
+                    if(!ignoreCB && callback) {
+                        callback(context, x, y, width, height, idx, textToDisplay);
+                        return;
+                    }
+
+                    context.font = '40px Georgia';
+                    var measuredTextWidth = parseInt(context.measureText(textToDisplay).width);
+                    x = x + (parseInt((width - measuredTextWidth)) / 2);
+                    y = (context.canvas.height - height) + 50;
+                    context.strokeStyle = 'rgb(255, 0, 0)';
+                    context.fillStyle = 'rgba(255, 255, 0, .5)';
+                    roundRect(context, x - 20, y - 35, measuredTextWidth + 40, 45, 20, true);
+                    var gradient = context.createLinearGradient(0, 0, width * 2, 0);
+                    gradient.addColorStop('0', 'magenta');
+                    gradient.addColorStop('0.5', 'blue');
+                    gradient.addColorStop('1.0', 'red');
+                    context.fillStyle = gradient;
+                    context.fillText(textToDisplay, x, y);
+                };
+            }
+
+            /**
+             * Draws a rounded rectangle using the current state of the canvas.
+             * If you omit the last three params, it will draw a rectangle
+             * outline with a 5 pixel border radius
+             * @param {CanvasRenderingContext2D} ctx
+             * @param {Number} x The top left x coordinate
+             * @param {Number} y The top left y coordinate
+             * @param {Number} width The width of the rectangle
+             * @param {Number} height The height of the rectangle
+             * @param {Number} [radius = 5] The corner radius; It can also be an object 
+             *                 to specify different radii for corners
+             * @param {Number} [radius.tl = 0] Top left
+             * @param {Number} [radius.tr = 0] Top right
+             * @param {Number} [radius.br = 0] Bottom right
+             * @param {Number} [radius.bl = 0] Bottom left
+             * @param {Boolean} [fill = false] Whether to fill the rectangle.
+             * @param {Boolean} [stroke = true] Whether to stroke the rectangle.
+             */
+            // via: http://stackoverflow.com/a/3368118/552182
+            function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+                if (typeof stroke == 'undefined') {
+                    stroke = true;
+                }
+                if (typeof radius === 'undefined') {
+                    radius = 5;
+                }
+                if (typeof radius === 'number') {
+                    radius = {
+                        tl: radius,
+                        tr: radius,
+                        br: radius,
+                        bl: radius
+                    };
+                } else {
+                    var defaultRadius = {
+                        tl: 0,
+                        tr: 0,
+                        br: 0,
+                        bl: 0
+                    };
+                    for (var side in defaultRadius) {
+                        radius[side] = radius[side] || defaultRadius[side];
+                    }
+                }
+                ctx.beginPath();
+                ctx.moveTo(x + radius.tl, y);
+                ctx.lineTo(x + width - radius.tr, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+                ctx.lineTo(x + width, y + height - radius.br);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+                ctx.lineTo(x + radius.bl, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+                ctx.lineTo(x, y + radius.tl);
+                ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+                ctx.closePath();
+                if (fill) {
+                    ctx.fill();
+                }
+                if (stroke) {
+                    ctx.stroke();
+                }
             }
         </script>
 

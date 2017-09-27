@@ -36,7 +36,7 @@ Or link specific build:
 * https://github.com/muaz-khan/MultiStreamsMixer/releases
 
 ```html
-<script src="https://github.com/muaz-khan/MultiStreamsMixer/releases/download/1.0.3/MultiStreamsMixer.js"></script>
+<script src="https://github.com/muaz-khan/MultiStreamsMixer/releases/download/1.0.4/MultiStreamsMixer.js"></script>
 ```
 
 # How to mix audios?

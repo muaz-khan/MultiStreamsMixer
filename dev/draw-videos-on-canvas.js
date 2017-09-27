@@ -26,16 +26,16 @@ function drawVideosToCanvas() {
         canvas.width = videosLength > 1 ? remaining[0].width * 2 : remaining[0].width;
 
         var height = 1;
-        if (videosLength == 3 || videosLength == 4) {
+        if (videosLength === 3 || videosLength === 4) {
             height = 2;
         }
-        if (videosLength == 5 || videosLength == 6) {
+        if (videosLength === 5 || videosLength === 6) {
             height = 3;
         }
-        if (videosLength == 7 || videosLength == 8) {
+        if (videosLength === 7 || videosLength === 8) {
             height = 4;
         }
-        if (videosLength == 9 || videosLength == 10) {
+        if (videosLength === 9 || videosLength === 10) {
             height = 5;
         }
         canvas.height = remaining[0].height * height;

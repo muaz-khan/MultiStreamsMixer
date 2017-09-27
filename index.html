@@ -1,4 +1,4 @@
-<script>window.demoVersion = '2017.09.04';</script>
+<script>window.demoVersion = '2017.09.27';</script>
 
 <!--
 > Muaz Khan     - www.MuazKhan.com
@@ -66,7 +66,7 @@
         <div class="github-stargazers"></div>
 
         <section style="text-align: center; margin-top: 15px; color: red;" id="demoVersion"></section>
-        <script>var date=new Date(window.demoVersion),month=date.toLocaleString("en-us",{month:"long"}),day=date.getUTCDate();day.toString().length<=9&&(day="0"+day);var year=date.getUTCFullYear();document.getElementById("demoVersion").innerHTML="Last Updated On: <time>"+month+" "+day+" "+year+"</time>";</script>
+        <script>var date=new Date(window.demoVersion),month=date.toLocaleString("en-us",{month:"long"}),day=date.getUTCDate();day.toString().length<=9&&(day=day.toString().length == 1 ? "0"+day : day);var year=date.getUTCFullYear(); document.getElementById("demoVersion").innerHTML="Last Updated On: <time>"+month+" "+day+" "+year+"</time>";</script>
 
         <div style="text-align:center;">
                 <a href="https://www.npmjs.com/package/multistreamsmixer" target="_blank">
@@ -82,22 +82,13 @@
                 </a>
             </div>
 
-        <blockquote>
-            Pass multiple streams (e.g. screen+camera or multiple-cameras) and get single stream.
-
-            <br><br>Requires <a href="https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk" target="_blank">THIS CHROME EXTENSION</a> and following Chrome flag:
-
-            <pre style="background:#fdf6e3;color:#586e75">chrome:<span style="color:#93a1a1">//flags/#enable-experimental-web-platform-features</span>
-</pre>
-        </blockquote>
-
         <section class="experiment" style="text-align: center;">
             <button id="btn-get-mixed-stream">Get Mixed Stream</button>
 
             <select id="mixer-options">
-                <option value="camera-screen">Camera + Screen</option>
                 <option value="multiple-cameras-default">Multiple Cameras (Default)</option>
                 <option value="multiple-cameras-customized">Multiple Cameras (Customized)</option>
+                <option value="camera-screen">Camera + Screen</option>
                 <option value="microphone-mp3">Microphone + Mp3</option>
             </select>
 
@@ -177,7 +168,7 @@
                             mixer.frameInterval = 1;
                             mixer.startDrawingFrames();
 
-                            videoPreview.srcObject = mixer.getMixedStream();
+                            setSrcObject(mixer.getMixedStream(), videoPreview);
 
                             updateMediaHTML('Mixed Screen+Camera!');
 
@@ -259,13 +250,13 @@
                             context.fillText(textToDisplay, x, y);
                         });
 
-                        mixer = new MultiStreamsMixer([cameraStream, cameraStream, cameraStream]);
+                        mixer = new MultiStreamsMixer([cameraStream, cameraStream, cameraStream, cameraStream]);
                     }
 
                     mixer.frameInterval = 1;
                     mixer.startDrawingFrames();
 
-                    videoPreview.srcObject = mixer.getMixedStream();
+                    setSrcObject(mixer.getMixedStream(), videoPreview);
 
                     updateMediaHTML('Mixed Multiple Cameras!');
                 });
@@ -283,7 +274,7 @@
                         var audioPreview = document.createElement('audio');
                         audioPreview.controls = true;
                         audioPreview.autoplay = true;
-                        audioPreview.srcObject = audioMixer.getMixedStream();
+                        setSrcObject(audioMixer.getMixedStream(), audioPreview);
                         videoPreview.replaceWith(audioPreview);
                         videoPreview = audioPreview;
 
@@ -308,6 +299,7 @@
                         setTimeout(function() {
                             recorder.stopRecording(function() {
                                 audioPreview.removeAttribute('srcObject');
+                                audioPreview.removeAttribute('src');
                                 audioPreview.src = URL.createObjectURL(recorder.getBlob());
                             });
                         }, 5000)

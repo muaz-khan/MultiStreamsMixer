@@ -1,7 +1,7 @@
-// Last time updated: 2017-09-04 2:21:39 PM UTC
+// Last time updated: 2017-09-27 9:40:20 AM UTC
 
 // ________________________
-// MultiStreamsMixer v1.0.3
+// MultiStreamsMixer v1.0.4
 
 // Open-Sourced: https://github.com/muaz-khan/MultiStreamsMixer
 
@@ -125,6 +125,23 @@ function MultiStreamsMixer(arrayOfMediaStreams) {
         Storage.AudioContext = webkitAudioContext;
     }
 
+    function setSrcObject(stream, element, ignoreCreateObjectURL) {
+        if ('createObjectURL' in URL && !ignoreCreateObjectURL) {
+            try {
+                element.src = URL.createObjectURL(stream);
+            } catch (e) {
+                setSrcObject(stream, element, true);
+                return;
+            }
+        } else if ('srcObject' in element) {
+            element.srcObject = stream;
+        } else if ('mozSrcObject' in element) {
+            element.mozSrcObject = stream;
+        } else {
+            alert('createObjectURL/srcObject both are not supported.');
+        }
+    }
+
     this.startDrawingFrames = function() {
         drawVideosToCanvas();
     };
@@ -157,16 +174,16 @@ function MultiStreamsMixer(arrayOfMediaStreams) {
             canvas.width = videosLength > 1 ? remaining[0].width * 2 : remaining[0].width;
 
             var height = 1;
-            if (videosLength == 3 || videosLength == 4) {
+            if (videosLength === 3 || videosLength === 4) {
                 height = 2;
             }
-            if (videosLength == 5 || videosLength == 6) {
+            if (videosLength === 5 || videosLength === 6) {
                 height = 3;
             }
-            if (videosLength == 7 || videosLength == 8) {
+            if (videosLength === 7 || videosLength === 8) {
                 height = 4;
             }
-            if (videosLength == 9 || videosLength == 10) {
+            if (videosLength === 9 || videosLength === 10) {
                 height = 5;
             }
             canvas.height = remaining[0].height * height;
@@ -342,11 +359,7 @@ function MultiStreamsMixer(arrayOfMediaStreams) {
     function getVideo(stream) {
         var video = document.createElement('video');
 
-        if ('srcObject' in video) {
-            video.srcObject = stream;
-        } else {
-            video.src = URL.createObjectURL(stream);
-        }
+        setSrcObject(stream, video);
 
         video.muted = true;
         video.volume = 0;

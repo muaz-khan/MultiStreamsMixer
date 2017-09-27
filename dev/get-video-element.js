@@ -1,11 +1,7 @@
 function getVideo(stream) {
     var video = document.createElement('video');
 
-    if ('srcObject' in video) {
-        video.srcObject = stream;
-    } else {
-        video.src = URL.createObjectURL(stream);
-    }
+    setSrcObject(stream, video);
 
     video.muted = true;
     video.volume = 0;

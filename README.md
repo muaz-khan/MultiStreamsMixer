@@ -87,7 +87,7 @@ btnAppendNewStreams.onclick = function() {
 btnStopScreenSharing.onclick = function() {
     // replace all old streams with this one
     // it will replace only video tracks
-    mixer.replaceStreams([cameraStreamOnly]);
+    mixer.resetVideoStreams([cameraStreamOnly]);
 };
 ```
 

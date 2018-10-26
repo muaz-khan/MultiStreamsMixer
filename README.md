@@ -39,6 +39,12 @@ Or link specific build:
 <script src="https://github.com/muaz-khan/MultiStreamsMixer/releases/download/1.0.4/MultiStreamsMixer.js"></script>
 ```
 
+Or install using NPM:
+
+```sh
+npm install multistreamsmixer
+```
+
 # How to mix audios?
 
 ```javascript

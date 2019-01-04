@@ -112,13 +112,13 @@ mixer.startDrawingFrames();
 6. `appendStreams`: (function) append extra/new streams (anytime)
 
 # TypeScript / Angular
-
+```javascript
 import {MultiStreamsMixer} from 'yourPath/MultiStreamsMixer';
 use normally ex:
 let mixer = new MultiStreamsMixer([stream1,stream2]);
 mixer.appendStreams(stream3);
 let mixed = mixer.getMixedStream();
-
+```
 ## License
 
 [MultiStreamsMixer.js](https://github.com/muaz-khan/MultiStreamsMixer) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com).

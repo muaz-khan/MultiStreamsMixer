@@ -119,6 +119,7 @@ let mixer = new MultiStreamsMixer([stream1,stream2]);
 mixer.appendStreams(stream3);
 let mixed = mixer.getMixedStream();
 ```
+P.S: pollyfills are removed (except for AudioContext) use adapter instead
 ## License
 
 [MultiStreamsMixer.js](https://github.com/muaz-khan/MultiStreamsMixer) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com).

@@ -1,9 +1,5 @@
-/**
-* @Author: maalouf
-* @Date:   2019-01-04T10:14:45+01:00
- * @Last modified by:   maalouf
- * @Last modified time: 2019-01-04T14:53:20+01:00
-*/
+// @maalouf
+
 export class MultiStreamsMixer {
 
   videos : Array<any>;
@@ -42,7 +38,9 @@ export class MultiStreamsMixer {
 
   private isPureAudio(){
     for (let i = 0; i < this.arrayOfMediaStreams.length;i++){
-      if (this.arrayOfMediaStreams[i].getVideoTracks().length > 0) return false;
+      if (this.arrayOfMediaStreams[i].getTracks().filter(function(t) {
+                return t.kind === 'video';
+            }).length > 0) return false;
     }
     return true;
   }
@@ -200,7 +198,9 @@ export class MultiStreamsMixer {
       return mixedAudioStream;
     } else {
       if (mixedAudioStream) {
-        mixedAudioStream.getAudioTracks().forEach(track => {
+        mixedAudioStream.getTracks().filter(function(t) {
+                return t.kind === 'audio';
+            }).forEach(track => {
           mixedVideoStream.addTrack(track);
         });
       }
@@ -212,7 +212,9 @@ export class MultiStreamsMixer {
     this.resetVideoStreams();
     var capturedStream = this.canvas.captureStream() || this.canvas.mozCaptureStream();
     var videoStream = new MediaStream();
-    capturedStream.getVideoTracks().forEach(track => {
+    capturedStream.getTracks().filter(function(t) {
+                return t.kind === 'video';
+            }).forEach(track => {
       videoStream.addTrack(track);
     });
     this.canvas.stream = videoStream;
@@ -231,7 +233,9 @@ export class MultiStreamsMixer {
 
     let audioTracksLength = 0;
     this.arrayOfMediaStreams.forEach(stream => {
-      if (!stream.getAudioTracks().length) {
+      if (!stream.getTracks().filter(function(t) {
+                return t.kind === 'audio';
+            }).length) {
         return;
       }
       audioTracksLength++;
@@ -274,13 +278,17 @@ export class MultiStreamsMixer {
 
     this.arrayOfMediaStreams.concat(streams);
     streams.forEach(stream => {
-      if (stream.getVideoTracks().length) {
+      if (stream.getTracks().filter(function(t) {
+                return t.kind === 'video';
+            }).length) {
         var video = this.getVideo(stream);
         video['stream'] = stream;
         this.videos.push(video);
       }
 
-      if (stream.getAudioTracks().length && this.audioContext) {
+      if (stream.getTracks().filter(function(t) {
+                return t.kind === 'audio';
+            }).length && this.audioContext) {
         var audioSource = this.audioContext.createMediaStreamSource(stream);
         audioSource.connect(this.audioDestination);
         this.audioSources.push(audioSource);
@@ -337,7 +345,9 @@ export class MultiStreamsMixer {
 
     // via: @adrian-ber
     streams.forEach(stream => {
-      if (!stream.getVideoTracks().length) {
+      if (!stream.getTracks().filter(function(t) {
+                return t.kind === 'video';
+            }).length) {
         return;
       }
       let tempVideo = this.getVideo(stream);

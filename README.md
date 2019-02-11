@@ -112,6 +112,7 @@ mixer.startDrawingFrames();
 6. `appendStreams`: (function) append extra/new streams (anytime)
 
 # TypeScript / Angular
+
 ```javascript
 import {MultiStreamsMixer} from 'yourPath/MultiStreamsMixer';
 use normally ex:
@@ -120,6 +121,13 @@ mixer.appendStreams(stream3);
 let mixed = mixer.getMixedStream();
 ```
 P.S: pollyfills are removed (except for AudioContext) use adapter instead
+
+# Disclaimer
+
+There is no warranty, expressed or implied, associated with this product. Use at your own risk.
+
+* https://www.webrtc-experiment.com/disclaimer/
+
 ## License
 
 [MultiStreamsMixer.js](https://github.com/muaz-khan/MultiStreamsMixer) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com).

@@ -1,7 +1,7 @@
-// Last time updated: 2019-01-12 7:02:57 AM UTC
+// Last time updated: 2019-02-20 3:06:25 PM UTC
 
 // ________________________
-// MultiStreamsMixer v1.0.7
+// MultiStreamsMixer v1.0.8
 
 // Open-Sourced: https://github.com/muaz-khan/MultiStreamsMixer
 
@@ -11,6 +11,97 @@
 // --------------------------------------------------
 
 function MultiStreamsMixer(arrayOfMediaStreams) {
+
+    var browserFakeUserAgent = 'Fake/5.0 (FakeOS) AppleWebKit/123 (KHTML, like Gecko) Fake/12.3.4567.89 Fake/123.45';
+
+    (function(that) {
+        if (!that) {
+            return;
+        }
+
+        if (typeof window !== 'undefined') {
+            return;
+        }
+
+        if (typeof global === 'undefined') {
+            return;
+        }
+
+        global.navigator = {
+            userAgent: browserFakeUserAgent,
+            getUserMedia: function() {}
+        };
+
+        if (!global.console) {
+            global.console = {};
+        }
+
+        if (typeof global.console.log === 'undefined' || typeof global.console.error === 'undefined') {
+            global.console.error = global.console.log = global.console.log || function() {
+                console.log(arguments);
+            };
+        }
+
+        if (typeof document === 'undefined') {
+            /*global document:true */
+            that.document = {
+                documentElement: {
+                    appendChild: function() {
+                        return '';
+                    }
+                }
+            };
+
+            document.createElement = document.captureStream = document.mozCaptureStream = function() {
+                var obj = {
+                    getContext: function() {
+                        return obj;
+                    },
+                    play: function() {},
+                    pause: function() {},
+                    drawImage: function() {},
+                    toDataURL: function() {
+                        return '';
+                    }
+                };
+                return obj;
+            };
+
+            that.HTMLVideoElement = function() {};
+        }
+
+        if (typeof location === 'undefined') {
+            /*global location:true */
+            that.location = {
+                protocol: 'file:',
+                href: '',
+                hash: ''
+            };
+        }
+
+        if (typeof screen === 'undefined') {
+            /*global screen:true */
+            that.screen = {
+                width: 0,
+                height: 0
+            };
+        }
+
+        if (typeof URL === 'undefined') {
+            /*global screen:true */
+            that.URL = {
+                createObjectURL: function() {
+                    return '';
+                },
+                revokeObjectURL: function() {
+                    return '';
+                }
+            };
+        }
+
+        /*global window:true */
+        that.window = global;
+    })(typeof global !== 'undefined' ? global : null);
 
     // requires: chrome://flags/#enable-experimental-web-platform-features
 
@@ -440,4 +531,14 @@ function MultiStreamsMixer(arrayOfMediaStreams) {
 
     this.getMixedStream = getMixedStream;
 
+}
+
+if (typeof module !== 'undefined' /* && !!module.exports*/ ) {
+    module.exports = MultiStreamsMixer;
+}
+
+if (typeof define === 'function' && define.amd) {
+    define('MultiStreamsMixer', [], function() {
+        return MultiStreamsMixer;
+    });
 }

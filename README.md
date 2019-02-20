@@ -43,15 +43,18 @@ Or install using NPM:
 
 ```sh
 npm install multistreamsmixer
+
+const MultiStreamsMixer = require('multistreamsmixer');
+import { MultiStreamsMixer} from 'multistreamsmixer';
 ```
 
 # How to mix audios?
 
 ```javascript
-var audioMixer = new MultiStreamsMixer([microphone1, microphone2]);
+const audioMixer = new MultiStreamsMixer([microphone1, microphone2]);
 
 // record using MediaRecorder API
-var recorder = new MediaRecorder(audioMixer.getMixedStream());
+const recorder = new MediaRecorder(audioMixer.getMixedStream());
 
 // or share using WebRTC
 rtcPeerConnection.addStream(audioMixer.getMixedStream());
@@ -69,7 +72,7 @@ cameraStream.height = parseInt((20 / 100) * screenStream.height);
 cameraStream.top = screenStream.height - cameraStream.height;
 cameraStream.left = screenStream.width - cameraStream.width;
 
-var mixer = new MultiStreamsMixer([screenStream, cameraStream]);
+const mixer = new MultiStreamsMixer([screenStream, cameraStream]);
 
 rtcPeerConnection.addStream(audioMixer.getMixedStream());
 
@@ -94,7 +97,7 @@ btnStopScreenSharing.onclick = function() {
 # How to mix multiple cameras?
 
 ```javascript
-var mixer = new MultiStreamsMixer([camera1, camera2]);
+const mixer = new MultiStreamsMixer([camera1, camera2]);
 
 rtcPeerConnection.addStream(audioMixer.getMixedStream());
 
@@ -115,7 +118,6 @@ mixer.startDrawingFrames();
 
 ```javascript
 import {MultiStreamsMixer} from 'yourPath/MultiStreamsMixer';
-use normally ex:
 let mixer = new MultiStreamsMixer([stream1,stream2]);
 mixer.appendStreams(stream3);
 let mixed = mixer.getMixedStream();
@@ -130,4 +132,4 @@ There is no warranty, expressed or implied, associated with this product. Use at
 
 ## License
 
-[MultiStreamsMixer.js](https://github.com/muaz-khan/MultiStreamsMixer) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com).
+[MultiStreamsMixer.js](https://github.com/muaz-khan/MultiStreamsMixer) is released under [MIT licence](https://github.com/muaz-khan/MultiStreamsMixer/blob/master/LICENSE) . Copyright (c) [Muaz Khan](https://MuazKhan.com).

@@ -1,4 +1,4 @@
-// https://tonicdev.com/npm/recordrtc
+// https://tonicdev.com/npm/multistreamsmixer
 
 var MultiStreamsMixer;
 

@@ -43,9 +43,13 @@ Or install using NPM:
 
 ```sh
 npm install multistreamsmixer
+```
 
+And import/require:
+
+```javascript
 const MultiStreamsMixer = require('multistreamsmixer');
-import { MultiStreamsMixer} from 'multistreamsmixer';
+import MultiStreamsMixer from 'multistreamsmixer';
 ```
 
 # How to mix audios?

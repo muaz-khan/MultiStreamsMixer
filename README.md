@@ -78,7 +78,7 @@ cameraStream.left = screenStream.width - cameraStream.width;
 
 const mixer = new MultiStreamsMixer([screenStream, cameraStream]);
 
-rtcPeerConnection.addStream(audioMixer.getMixedStream());
+rtcPeerConnection.addStream(mixer.getMixedStream());
 
 mixer.frameInterval = 1;
 mixer.startDrawingFrames();
@@ -103,7 +103,7 @@ btnStopScreenSharing.onclick = function() {
 ```javascript
 const mixer = new MultiStreamsMixer([camera1, camera2]);
 
-rtcPeerConnection.addStream(audioMixer.getMixedStream());
+rtcPeerConnection.addStream(mixer.getMixedStream());
 
 mixer.frameInterval = 1;
 mixer.startDrawingFrames();

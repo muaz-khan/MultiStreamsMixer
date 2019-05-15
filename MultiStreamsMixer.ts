@@ -20,7 +20,7 @@ export class MultiStreamsMixer {
   gainNode : GainNode;
 
 
-  constructor (_arrayOfMediaStreams, elementClass = "multi-streams-mixer") {
+  constructor (_arrayOfMediaStreams, elementClass = 'multi-streams-mixer') {
     // requires: chrome://flags/#enable-experimental-web-platform-features
     this.arrayOfMediaStreams = _arrayOfMediaStreams;
     this.elementClass = elementClass;

@@ -1,4 +1,4 @@
-// Last time updated: 2019-05-15 7:45:25 PM UTC
+// Last time updated: 2019-05-15 7:50:08 PM UTC
 
 // ________________________
 // MultiStreamsMixer v1.0.8
@@ -105,7 +105,7 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
 
     // requires: chrome://flags/#enable-experimental-web-platform-features
 
-    elementClass = elementClass || "multi-streams-mixer";
+    elementClass = elementClass || 'multi-streams-mixer';
 
     var videos = [];
     var isStopDrawingFrames = false;

@@ -1,6 +1,6 @@
 // requires: chrome://flags/#enable-experimental-web-platform-features
 
-elementClass = elementClass || "multi-streams-mixer";
+elementClass = elementClass || 'multi-streams-mixer';
 
 var videos = [];
 var isStopDrawingFrames = false;

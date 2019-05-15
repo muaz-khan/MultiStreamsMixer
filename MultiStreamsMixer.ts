@@ -26,8 +26,8 @@ export class MultiStreamsMixer {
     this.isStopDrawingFrames = false;
     this.canvas = document.createElement('canvas');
     this.context = this.canvas.getContext('2d');
-    // this.canvas.style = 'opacity:0;position:absolute;z-index:-1;top: -100000000;left:-1000000000; margin-top:-1000000000;margin-left:-1000000000;';
-    // (document.body || document.documentElement).appendChild(canvas);
+    this.canvas.style = 'opacity:0;position:absolute;z-index:-1;top: -100000000;left:-1000000000; margin-top:-1000000000;margin-left:-1000000000;';
+    (document.body || document.documentElement).appendChild(canvas);
     this.disableLogs = false;
     this.frameInterval = 10;
     this.width = 360;

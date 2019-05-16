@@ -1,4 +1,4 @@
-// Last time updated: 2019-02-20 3:06:25 PM UTC
+// Last time updated: 2019-05-15 7:50:08 PM UTC
 
 // ________________________
 // MultiStreamsMixer v1.0.8
@@ -10,7 +10,7 @@
 // MIT License   - www.WebRTC-Experiment.com/licence
 // --------------------------------------------------
 
-function MultiStreamsMixer(arrayOfMediaStreams) {
+function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
 
     var browserFakeUserAgent = 'Fake/5.0 (FakeOS) AppleWebKit/123 (KHTML, like Gecko) Fake/12.3.4567.89 Fake/123.45';
 
@@ -105,12 +105,15 @@ function MultiStreamsMixer(arrayOfMediaStreams) {
 
     // requires: chrome://flags/#enable-experimental-web-platform-features
 
+    elementClass = elementClass || 'multi-streams-mixer';
+
     var videos = [];
     var isStopDrawingFrames = false;
 
     var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
     canvas.style = 'opacity:0;position:absolute;z-index:-1;top: -100000000;left:-1000000000; margin-top:-1000000000;margin-left:-1000000000;';
+    canvas.className = elementClass;
     (document.body || document.documentElement).appendChild(canvas);
 
     this.disableLogs = false;
@@ -420,6 +423,8 @@ function MultiStreamsMixer(arrayOfMediaStreams) {
         var video = document.createElement('video');
 
         setSrcObject(stream, video);
+
+        video.className = elementClass;
 
         video.muted = true;
         video.volume = 0;

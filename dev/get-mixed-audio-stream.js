@@ -34,6 +34,8 @@ function getMixedAudioStream() {
     });
 
     if (!audioTracksLength) {
+        // because "self.audioContext" is not initialized
+        // that's why we've to ignore rest of the code
         return;
     }
 

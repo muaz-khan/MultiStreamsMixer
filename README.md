@@ -19,25 +19,12 @@
 # Link the library
 
 ```html
-<script src="https://cdn.webrtc-experiment.com/MultiStreamsMixer.js"></script>
-
-<!-- or min.js -->
-<script src="https://cdn.webrtc-experiment.com/MultiStreamsMixer.min.js"></script>
-
-<!-- or without CDN -->
 <script src="https://www.webrtc-experiment.com/MultiStreamsMixer.js"></script>
-
-<!-- or rawgit -->
-<script src="https://rawgit.com/muaz-khan/MultiStreamsMixer/master/MultiStreamsMixer.js"></script>
 ```
 
 Or link specific build:
 
 * https://github.com/muaz-khan/MultiStreamsMixer/releases
-
-```html
-<script src="https://github.com/muaz-khan/MultiStreamsMixer/releases/download/1.0.4/MultiStreamsMixer.js"></script>
-```
 
 Or install using NPM:
 
@@ -121,18 +108,31 @@ mixer.startDrawingFrames();
 # TypeScript / Angular
 
 ```javascript
-import {MultiStreamsMixer} from 'yourPath/MultiStreamsMixer';
+import { MultiStreamsMixer } from 'yourPath/MultiStreamsMixer';
 let mixer = new MultiStreamsMixer([stream1,stream2]);
 mixer.appendStreams(stream3);
 let mixed = mixer.getMixedStream();
 ```
-P.S: pollyfills are removed (except for AudioContext) use adapter instead
 
-# Disclaimer
+P.S: pollyfills are removed (except for `AudioContext`) use adapter instead.
 
-There is no warranty, expressed or implied, associated with this product. Use at your own risk.
+# API
 
-* https://www.webrtc-experiment.com/disclaimer/
+```javascript
+MultiStreamsMixer.prototype = {
+	// get readonly MediaStream
+	getMixedStream: function() {},
+
+	// add more streams
+	appendStreams: function(arrayOfMediaStreams) {},
+
+	// replace with set of your own streams
+	resetVideoStreams: function(arrayOfMediaStreams) {},
+
+	// clear all the data
+	clearRecordedData: function() {}
+}
+````
 
 ## License
 

@@ -1,4 +1,4 @@
-// Last time updated: 2019-05-15 7:50:08 PM UTC
+// Last time updated: 2019-06-13 7:23:28 AM UTC
 
 // ________________________
 // MultiStreamsMixer v1.0.8
@@ -220,6 +220,7 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
             if (video.stream.fullcanvas) {
                 fullcanvas = video;
             } else {
+                // todo: video.stream.active or video.stream.live to fix blank frames issues?
                 remaining.push(video);
             }
         });
@@ -344,6 +345,10 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
             }
         });
 
+        // mixedVideoStream.prototype.appendStreams = appendStreams;
+        // mixedVideoStream.prototype.resetVideoStreams = resetVideoStreams;
+        // mixedVideoStream.prototype.clearRecordedData = clearRecordedData;
+
         return mixedVideoStream;
     }
 
@@ -409,6 +414,8 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
         });
 
         if (!audioTracksLength) {
+            // because "self.audioContext" is not initialized
+            // that's why we've to ignore rest of the code
             return;
         }
 
@@ -446,7 +453,7 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
             streams = [streams];
         }
 
-        arrayOfMediaStreams.concat(streams);
+        arrayOfMediaStreams = arrayOfMediaStreams.concat(streams);
 
         streams.forEach(function(stream) {
             if (stream.getTracks().filter(function(t) {
@@ -459,7 +466,7 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
 
             if (stream.getTracks().filter(function(t) {
                     return t.kind === 'audio';
-                }).length && self.audioContext) {
+                }).length && self.audioContext && self.audioDestination) {
                 var audioSource = self.audioContext.createMediaStreamSource(stream);
                 audioSource.connect(self.audioDestination);
                 self.audioSources.push(audioSource);

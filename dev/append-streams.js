@@ -7,7 +7,7 @@ this.appendStreams = function(streams) {
         streams = [streams];
     }
 
-    arrayOfMediaStreams.concat(streams);
+    arrayOfMediaStreams = arrayOfMediaStreams.concat(streams);
 
     streams.forEach(function(stream) {
         if (stream.getTracks().filter(function(t) {
@@ -20,7 +20,7 @@ this.appendStreams = function(streams) {
 
         if (stream.getTracks().filter(function(t) {
                 return t.kind === 'audio';
-            }).length && self.audioContext) {
+            }).length && self.audioContext && self.audioDestination) {
             var audioSource = self.audioContext.createMediaStreamSource(stream);
             audioSource.connect(self.audioDestination);
             self.audioSources.push(audioSource);

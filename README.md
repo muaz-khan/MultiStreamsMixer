@@ -116,9 +116,21 @@ let mixed = mixer.getMixedStream();
 
 P.S: pollyfills are removed (except for `AudioContext`) use adapter instead.
 
+# Access `<canvas>` or `<video>` using `querySelector`
+
+```javascript
+var canvas = document.querySelector('canvas.multi-streams-mixer');
+var videos = document.querySelectorAll('video.multi-streams-mixer');
+
+canvas.style.opacity = .1;
+```
+
 # API
 
 ```javascript
+// default elementClass is "multi-streams-mixer"
+var instance = new MultiStreamsMixer(arrayOfMediaStreams, elementClass);
+
 MultiStreamsMixer.prototype = {
 	// get readonly MediaStream
 	getMixedStream: function() {},
@@ -131,7 +143,7 @@ MultiStreamsMixer.prototype = {
 
 	// clear all the data
 	clearRecordedData: function() {}
-}
+};
 ````
 
 ## License

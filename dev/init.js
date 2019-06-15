@@ -12,8 +12,6 @@ canvas.style.position = 'absolute';
 canvas.style.zIndex = -1;
 canvas.style.top = '-1000em';
 canvas.style.left = '-1000em';
-canvas.style.marginTop = '-1000em';
-canvas.style.marginLeft = '-1000em';
 canvas.className = elementClass;
 (document.body || document.documentElement).appendChild(canvas);
 

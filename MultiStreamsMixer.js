@@ -1,7 +1,7 @@
-// Last time updated: 2019-06-15 12:37:26 AM UTC
+// Last time updated: 2019-06-15 1:07:23 AM UTC
 
 // ________________________
-// MultiStreamsMixer v1.0.9
+// MultiStreamsMixer v1.2.0
 
 // Open-Sourced: https://github.com/muaz-khan/MultiStreamsMixer
 
@@ -62,7 +62,8 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
                     drawImage: function() {},
                     toDataURL: function() {
                         return '';
-                    }
+                    },
+                    style: {}
                 };
                 return obj;
             };
@@ -117,8 +118,6 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
     canvas.style.zIndex = -1;
     canvas.style.top = '-1000em';
     canvas.style.left = '-1000em';
-    canvas.style.marginTop = '-1000em';
-    canvas.style.marginLeft = '-1000em';
     canvas.className = elementClass;
     (document.body || document.documentElement).appendChild(canvas);
 

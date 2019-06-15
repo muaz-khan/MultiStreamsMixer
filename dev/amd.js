@@ -48,7 +48,8 @@ var browserFakeUserAgent = 'Fake/5.0 (FakeOS) AppleWebKit/123 (KHTML, like Gecko
                 drawImage: function() {},
                 toDataURL: function() {
                     return '';
-                }
+                },
+                style: {}
             };
             return obj;
         };

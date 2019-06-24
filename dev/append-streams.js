@@ -8,6 +8,8 @@ this.appendStreams = function(streams) {
     }
 
     streams.forEach(function(stream) {
+        arrayOfMediaStreams.push(stream);
+
         var newStream = new MediaStream();
 
         if (stream.getTracks().filter(function(t) {
@@ -26,14 +28,12 @@ this.appendStreams = function(streams) {
                 return t.kind === 'audio';
             }).length) {
             var audioSource = self.audioContext.createMediaStreamSource(stream);
-            self.audioDestination = self.audioContext.createMediaStreamDestination();
+            // self.audioDestination = self.audioContext.createMediaStreamDestination();
             audioSource.connect(self.audioDestination);
 
             newStream.addTrack(self.audioDestination.stream.getTracks().filter(function(t) {
                 return t.kind === 'audio';
             })[0]);
         }
-
-        arrayOfMediaStreams.push(newStream);
     });
 };

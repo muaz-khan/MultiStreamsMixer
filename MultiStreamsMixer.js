@@ -1,4 +1,4 @@
-// Last time updated: 2019-06-21 4:09:42 AM UTC
+// Last time updated: 2019-06-24 6:37:06 PM UTC
 
 // ________________________
 // MultiStreamsMixer v1.2.2
@@ -422,12 +422,6 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
             self.audioSources.push(audioSource);
         });
 
-        if (!audioTracksLength) {
-            // because "self.audioContext" is not initialized
-            // that's why we've to ignore rest of the code
-            return;
-        }
-
         self.audioDestination = self.audioContext.createMediaStreamDestination();
         self.audioSources.forEach(function(audioSource) {
             audioSource.connect(self.audioDestination);
@@ -463,6 +457,8 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
         }
 
         streams.forEach(function(stream) {
+            arrayOfMediaStreams.push(stream);
+
             var newStream = new MediaStream();
 
             if (stream.getTracks().filter(function(t) {
@@ -481,15 +477,13 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
                     return t.kind === 'audio';
                 }).length) {
                 var audioSource = self.audioContext.createMediaStreamSource(stream);
-                self.audioDestination = self.audioContext.createMediaStreamDestination();
+                // self.audioDestination = self.audioContext.createMediaStreamDestination();
                 audioSource.connect(self.audioDestination);
 
                 newStream.addTrack(self.audioDestination.stream.getTracks().filter(function(t) {
                     return t.kind === 'audio';
                 })[0]);
             }
-
-            arrayOfMediaStreams.push(newStream);
         });
     };
 

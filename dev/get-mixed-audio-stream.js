@@ -33,12 +33,6 @@ function getMixedAudioStream() {
         self.audioSources.push(audioSource);
     });
 
-    if (!audioTracksLength) {
-        // because "self.audioContext" is not initialized
-        // that's why we've to ignore rest of the code
-        return;
-    }
-
     self.audioDestination = self.audioContext.createMediaStreamDestination();
     self.audioSources.forEach(function(audioSource) {
         audioSource.connect(self.audioDestination);

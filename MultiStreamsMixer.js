@@ -467,6 +467,11 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
                 var video = getVideo(stream);
                 video.stream = stream;
                 videos.push(video);
+                
+                newStream.width = stream.width;
+                newStream.height = stream.height;
+                newStream.left = stream.left;
+                newStream.top = stream.top;
 
                 newStream.addTrack(stream.getTracks().filter(function(t) {
                     return t.kind === 'video';

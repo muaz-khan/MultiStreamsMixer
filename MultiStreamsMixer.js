@@ -475,9 +475,14 @@ function MultiStreamsMixer(arrayOfMediaStreams, elementClass) {
 
             if (stream.getTracks().filter(function(t) {
                     return t.kind === 'audio';
-                }).length) {
+                }).length) {             
+                if (!Storage.AudioContextConstructor) {
+                    Storage.AudioContextConstructor = new Storage.AudioContext();
+                }
+                self.audioContext = Storage.AudioContextConstructor;
+                
                 var audioSource = self.audioContext.createMediaStreamSource(stream);
-                // self.audioDestination = self.audioContext.createMediaStreamDestination();
+                self.audioDestination = self.audioContext.createMediaStreamDestination();
                 audioSource.connect(self.audioDestination);
 
                 newStream.addTrack(self.audioDestination.stream.getTracks().filter(function(t) {
